@@ -10,7 +10,7 @@ This Batch Connect app requires the following software be installed in a locatio
 
 - [Spack](https://spack.io/)
   - A Spack environment containing `py-jupyterlab` and any other spack packages containing Python modules that are desired.
-  - The `spack.yaml` file from an environment configured for this app is included in this repo.
+  - The `spack.yaml` file from an environment configured for this app is included in this repo at `spack-environment/jupyter/spack.yml`.
 
 The default location for spack and the default environment name are defined in `form.yml`.
 
