@@ -3,8 +3,22 @@
 # @note Used to define the submitted cluster, title, description, and
 #   hard-coded/user-defined attributes that make up this Batch Connect app.
 <%-
-groups = OodSupport::User.new.groups.sort_by(&:id).map(&:name).flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
-if groups.include?("135510")
+userGroups = OodSupport::User.new.groups.sort_by(&:id).map(&:name).flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
+enabledGroups = [
+  "135510", # HUIT Open OnDemand Testing
+  "139860"  # HEB 115: Investigating the Human Genome
+]
+
+def arrays_have_common_element?(array1, array2)
+  # Use the `&` operator to get the intersection of the two arrays
+  # If the intersection is not empty, return true, otherwise false
+  !(array1 & array2).empty?
+end
+
+# Check if the groups that the user is in match any of the courses that should 
+# have access to this app.
+
+if arrays_have_common_element(userGroups, enabledGroups)
   cluster="*"
 else
   cluster="disable_this_app"
