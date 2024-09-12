@@ -1,7 +1,8 @@
 ---
-name: Jupyter Notebook (spack)
+name: Jupyter Lab
 category: Interactive Apps
 subcategory: Servers
 role: batch_connect
 description: |
-  This app will launch a Jupyter Notebook server on one or more nodes. This configuration uses spack to load Jupyter Lab.
+  This app will launch a Jupyter Lab server. This configuration uses 
+  [Spack](https://spack.io/) to load Jupyter Lab.
