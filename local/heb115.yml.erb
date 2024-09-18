@@ -3,6 +3,10 @@
 # @note Used to define the submitted cluster, title, description, and
 #   hard-coded/user-defined attributes that make up this Batch Connect app.
 <%-
+# User POSIX groups are checked against a list of Canvas Course IDs, which are 
+# expected to be present in group names following the convention 
+# `canvas<canvas_id>-<group_id>`. To add to this list, add a Canvas Course ID 
+# and comment it with the title of the course.
 userGroups = OodSupport::User.new.groups.sort_by(&:id).map(&:name).flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
 enabledGroups = [
   "135510", # HUIT Open OnDemand Testing
