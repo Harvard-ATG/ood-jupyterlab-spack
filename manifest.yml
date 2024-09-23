@@ -1,7 +1,12 @@
 ---
-name: Jupyter Notebook (spack)
+name: Jupyter Lab
 category: Interactive Apps
 subcategory: Servers
 role: batch_connect
 description: |
-  This app will launch a Jupyter Notebook server on one or more nodes. This configuration uses spack to load Jupyter Lab.
+  This app will launch a Jupyter Lab server. This configuration uses
+  [Spack](https://spack.io/) to load Jupyter Lab. The app launches outside of a
+  container, so it has access to slurm commands, but since the app is running as
+  a slurm job, the `srun` command will use the resources of the current job,
+  rather than starting a new job. That is, unless you first run an `salloc`
+  command to allocate a new interactive session first.
