@@ -2,13 +2,39 @@
 #
 # @note Used to define the submitted cluster, title, description, and
 #   hard-coded/user-defined attributes that make up this Batch Connect app.
+<%-
+# User POSIX groups are checked against a list of Canvas Course IDs, which are 
+# expected to be present in group names following the convention 
+# `canvas<canvas_id>-<group_id>`. To add to this list, add a Canvas Course ID 
+# and comment it with the title of the course.
+userGroups = OodSupport::User.new.groups.sort_by(&:id).map(&:name).flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
+enabledGroups = [
+  "135510", # HUIT Open OnDemand Testing
+  "138195"  # GOV 99R: Tutorial - Senior Year
+]
+
+def arrays_have_common_element(array1, array2)
+  # Use the `&` operator to get the intersection of the two arrays
+  # If the intersection is not empty, return true, otherwise false
+  !(array1 & array2).empty?
+end
+
+# Check if the groups that the user is in match any of the courses that should 
+# have access to this app.
+
+if arrays_have_common_element(userGroups, enabledGroups)
+  cluster="*"
+else
+  cluster="disable_this_app"
+end
+-%>
 ---
 
-# **MUST** set cluster id here that matches cluster configuration file located
-# under /etc/ood/config/clusters.d/*.yml
-# @example Use the Owens cluster at Ohio Supercomputer Center
-#     cluster: "owens"
-cluster: "*"
+# Set cluster from group. "*" runs on whatever cluster is available, and 
+# "disable_this_app" hides the app from view.
+cluster: "<%= cluster %>"
+
+title: "Jupyter Lab - GOV 99R"
 
 # Define attribute values that aren't meant to be modified by the user within
 # the Dashboard form
@@ -25,17 +51,9 @@ attributes:
   #     modules: "python/3.5"
   # @example Using combination of modules
   #     modules: "python/3.5 cuda/8.0.44"
-  environment:
-    label: "Spack environment"
-    value: "jupyter"
-    required: true
-    help: "Spack environment to use to load jupyter. This environment must include `py-jupyterlab` and exist in the spack install location specified. The default value for a generic configuration is \"jupyter\""
+  environment: heb115
   
-  spack:
-    label: "Spack installation location"
-    value: "/shared/spack"
-    required: true
-    help: "The location of a spack installation folder to use. The default location is \"/shared/spack\". If using a custom location, use the absolute path to the root spack folder, containing `bin`, `etc`, `lib`, `opt`, `share`, and `var` folders."
+  spack: "/shared/spack"
 
   custom_num_cores:
     widget: "number_field"
@@ -43,6 +61,14 @@ attributes:
     value: 1
     min: 1
     max: 4
+    step: 1
+ 
+  custom_ram_cores:
+    widget: "number_field"
+    label: "Number of RAM"
+    value: 1
+    min: 1
+    max: 8
     step: 1
 
   # Any extra command line arguments to feed to the `jupyter notebook ...`
