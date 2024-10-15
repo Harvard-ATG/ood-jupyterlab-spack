@@ -31,6 +31,8 @@ spack find
 # Benchmark info
 echo "TIMING - Starting jupyter at: $(date)"
 
+CHECKPOINT_ARG="<%= context.disable_checkpoints ? '--FileCheckpoints.checkpoint_dir=/tmp' : '' %>"
+
 # Launch the Jupyter Lab Server
 set -x
-jupyter lab --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
+jupyter lab --config="${CONFIG_FILE}" $CHECKPOINT_ARG <%= context.extra_jupyter_args %>

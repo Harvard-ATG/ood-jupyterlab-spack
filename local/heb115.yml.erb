@@ -3,10 +3,6 @@
 # @note Used to define the submitted cluster, title, description, and
 #   hard-coded/user-defined attributes that make up this Batch Connect app.
 <%-
-# User POSIX groups are checked against a list of Canvas Course IDs, which are 
-# expected to be present in group names following the convention 
-# `canvas<canvas_id>-<group_id>`. To add to this list, add a Canvas Course ID 
-# and comment it with the title of the course.
 userGroups = OodSupport::User.new.groups.sort_by(&:id).map(&:name).flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
 enabledGroups = [
   "135510", # HUIT Open OnDemand Testing
@@ -63,6 +59,12 @@ attributes:
     max: 4
     step: 1
 
+  disable_checkpoints:
+    widget: "check_box"
+    label: "Disable Checkpoints"
+    help: |
+      Redirects `.ipynb_checkpoints` to `/tmp`, so checkpoints are not persistent. Select this option if you do not want checkpoint folders to appear, or if the checkpoints are causing problems.
+
   # Any extra command line arguments to feed to the `jupyter notebook ...`
   # command that launches the Jupyter notebook within the batch job
   extra_jupyter_args: ""
@@ -82,3 +84,4 @@ form:
   - extra_jupyter_args
   - bc_num_hours
   - custom_num_cores
+  - disable_checkpoints
