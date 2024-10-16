@@ -44,6 +44,15 @@ attributes:
     min: 1
     max: 4
     step: 1
+  
+  # For this checkbox, a checked value is "1" as a string, and an unchecked
+  # value is "0" as a string. It's used to determine whether or not to redirect
+  # the ipynb_checkpoints folder to /tmp, functionally disabling checkpoints.
+  disable_checkpoints:
+    widget: "check_box"
+    label: "Disable Checkpoints"
+    help: |
+      Redirects `.ipynb_checkpoints` to `/tmp`, so checkpoints are not persistent. Select this option if you do not want checkpoint folders to appear, or if the checkpoints are causing problems.
 
   # Any extra command line arguments to feed to the `jupyter notebook ...`
   # command that launches the Jupyter notebook within the batch job
@@ -64,3 +73,4 @@ form:
   - extra_jupyter_args
   - bc_num_hours
   - custom_num_cores
+  - disable_checkpoints
