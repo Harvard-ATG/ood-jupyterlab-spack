@@ -31,6 +31,7 @@ spack find
 # Benchmark info
 echo "TIMING - Starting jupyter at: $(date)"
 
+# Parse the form variable to see if checkpoints should be redirected to /tmp
 CHECKPOINT_ARG="<%= context.disable_checkpoints=="1" ? '--FileCheckpoints.checkpoint_dir=/tmp' : '' %>"
 
 # Launch the Jupyter Lab Server

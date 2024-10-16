@@ -45,6 +45,9 @@ attributes:
     max: 4
     step: 1
   
+  # For this checkbox, a checked value is "1" as a string, and an unchecked
+  # value is "0" as a string. It's used to determine whether or not to redirect
+  # the ipynb_checkpoints folder to /tmp, functionally disabling checkpoints.
   disable_checkpoints:
     widget: "check_box"
     label: "Disable Checkpoints"
