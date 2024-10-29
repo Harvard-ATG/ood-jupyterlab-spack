@@ -5,15 +5,17 @@
 spack:
   # add package specs to the `specs` list
   specs:
-  - admixtools
-  - bcftools
-  - plink
-  - samtools
+  - admixtools@7.0.2
+  - bcftools@1.19
+  - plink@1.9-beta6.27
+  - samtools@1.19.2
   - py-jupyterlab
-  - py-numpy
   - py-pandas
+  - py-numpy
   - py-matplotlib
   - py-scipy
+  - py-geopandas@0.14.4
+  - py-fiona@1.10.1 # Added via spack checksum and spack edit
   view: true
   concretizer:
     unify: true
