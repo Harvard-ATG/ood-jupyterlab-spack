@@ -14,7 +14,7 @@ spack:
   - py-numpy
   - py-matplotlib
   - py-scipy
-  - py-geopandas
+  - py-geopandas@0.14.4
   - py-fiona@1.10.1 # Added via spack checksum and spack edit
   view: true
   concretizer:
