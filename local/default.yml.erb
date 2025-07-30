@@ -3,29 +3,40 @@
 # @note Used to define the submitted cluster, title, description, and
 #   hard-coded/user-defined attributes that make up this Batch Connect app.
 <%-
-# User POSIX groups are checked against a list of Canvas Course IDs, which are 
-# expected to be present in group names following the convention 
-# `canvas<canvas_id>-<group_id>`. To add to this list, add a Canvas Course ID 
-# and comment it with the title of the course.
-userGroups = OodSupport::User.new.groups.sort_by(&:id).map(&:name).flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
-enabledGroups = [
-  "135510", # HUIT Open OnDemand Testing
-  "139860"  # HEB 115: Investigating the Human Genome
-]
-
 def arrays_have_common_element(array1, array2)
   # Use the `&` operator to get the intersection of the two arrays
   # If the intersection is not empty, return true, otherwise false
   !(array1 & array2).empty?
 end
 
-# Check if the groups that the user is in match any of the courses that should 
-# have access to this app.
+# User POSIX groups are checked against a list of Canvas Course IDs, which are 
+# expected to be present in group names following the convention 
+# `canvas<canvas_id>-<group_id>`. To add to this list, add a Canvas Course ID 
+# and comment it with the title of the course.
+userGroups = OodSupport::User.new.groups.sort_by(&:id).map(&:name)
+# First check if the user is in an admin group
+adminGroups = [
+  "ondemand-admins-1025174" # HUIT OOD admin group, prod environment
+]
 
-if arrays_have_common_element(userGroups, enabledGroups)
+if arrays_have_common_element(userGroups, adminGroups)
   cluster="*"
 else
-  cluster="disable_this_app"
+  # If the user is not in an admin group, check if they're in an authorized Canvas group
+  userCanvasGroups = userGroups.flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
+  enabledGroups = [
+    "135510", # HUIT Open OnDemand Testing
+    "153784"  # HEB 115: Investigating the Human Genome (Fall 2025)
+  ]
+
+  # Check if the groups that the user is in match any of the courses that should
+  # have access to this app.
+
+  if arrays_have_common_element(userCanvasGroups, enabledGroups)
+    cluster="*"
+  else
+    cluster="disable_this_app"
+  end
 end
 -%>
 ---
@@ -34,7 +45,7 @@ end
 # "disable_this_app" hides the app from view.
 cluster: "<%= cluster %>"
 
-title: "Jupyter Lab - HEB 115"
+title: "Jupyter Lab - Generic (Spack)"
 
 # Define attribute values that aren't meant to be modified by the user within
 # the Dashboard form
@@ -51,7 +62,7 @@ attributes:
   #     modules: "python/3.5"
   # @example Using combination of modules
   #     modules: "python/3.5 cuda/8.0.44"
-  environment: heb115
+  environment: jupyter
   
   spack: "/shared/spack"
 
