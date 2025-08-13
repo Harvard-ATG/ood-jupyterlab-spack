@@ -9,7 +9,9 @@ spack:
   - py-numpy
   - py-pandas
   - py-matplotlib
+  - py-seaborn
   - py-scipy
+  - py-requests
   view: true
   concretizer:
     unify: true
