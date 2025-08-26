@@ -2,20 +2,25 @@
 #
 # It describes a set of packages to be installed, along with
 # configuration settings.
+#
+# HEB 115 has also used Eigensoft in the past, which is installed with a script:
+# https://github.com/Harvard-ATG/atg-ood-scripts/blob/main/eigensoftInstall.sh
 spack:
   # add package specs to the `specs` list
   specs:
   - admixtools@7.0.2
-  - bcftools@1.19
-  - plink@1.9-beta6.27
-  - samtools@1.19.2
+  - bcftools@1.21
+  - plink@1.9-beta7.7
+  - samtools@1.21
   - py-jupyterlab
   - py-pandas
   - py-numpy
   - py-matplotlib
   - py-scipy
-  - py-geopandas@0.14.4
-  - py-fiona@1.10.1 # Added via spack checksum and spack edit
+  - py-seaborn
+  - py-requests
+  - py-geopandas
+  - py-fiona
   view: true
   concretizer:
     unify: true
