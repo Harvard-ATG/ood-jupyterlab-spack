@@ -1,0 +1,106 @@
+# Jupyter app user-facing configuration form file (default sub-app)
+# 
+# This config file is both an actual configuration file for an actual sample 
+# application, and a starting point for configuring a new sub-app. It is based 
+# on the `form.yml` file in the root of the repository. To make a custom 
+# application launch for a course, make a copy of this file in the same folder 
+# and customize the form config to your liking. There are notes along the way 
+# to help you understand what options you can make configurable to users.
+# See the docs page from Open OnDemand for more details:
+# https://osc.github.io/ood-documentation/develop/how-tos/app-development/interactive/form.html
+<%-
+adminGroups = [
+  "ondemand-admins-1025174" # HUIT OOD admin group, prod environment
+]
+
+enabledGroups = [
+  "153461" # COMPSCI 2470R: Advanced Topics in Computer Architecture
+]
+
+def arrays_have_common_element(array1, array2)
+  # Use the `&` operator to get the intersection of the two arrays
+  # If the intersection is not empty, return true, otherwise false
+  !(array1 & array2).empty?
+end
+
+# User POSIX groups are checked against a list of Canvas Course IDs, which are 
+# expected to be present in group names following the convention 
+# `canvas<canvas_id>-<group_id>`. To add to this list, add a Canvas Course ID 
+# and comment it with the title of the course.
+userGroups = OodSupport::User.new.groups.sort_by(&:id).map(&:name)
+# First check if the user is in an admin group
+if arrays_have_common_element(userGroups, adminGroups)
+  cluster="*"
+else
+  # If the user is not in an admin group, check if they're in an authorized Canvas group
+  userCanvasGroups = userGroups.flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
+
+  # Check if the groups that the user is in match any of the courses that should
+  # have access to this app.
+
+  if arrays_have_common_element(userCanvasGroups, enabledGroups)
+    cluster="*"
+  else
+    cluster="disable_this_app"
+  end
+end
+-%>
+---
+
+# Cluster will be set to either "*" (allowing the app to run on any cluster) or 
+# "disable_this_app", which will disable the app by only allowing it to run on 
+# a non-existant cluster.
+cluster: "<%= cluster %>"
+
+title: "Jupyter Lab - COMPSCI 2470R"
+
+# Define attributes that are set up by this configuration. If an attribute is 
+# set up with a static value here, it will be assigned that value in the job, 
+# and will not appear in the form. If the attribute is configured with a widget
+# and/or other options, and it is configured in the form section below, it will
+# appear to users as a configurable option.
+attributes:
+  # Location of Spack installation to use in this app
+  spack: "/shared/spack"
+
+  # Spack environment to activate, regardless of which Spack installation is in use.
+  environment: jupyter
+
+  # How many CPU cores to include in the slurm job submission
+  custom_num_cores:
+    widget: "number_field"
+    label: "Number of CPUs"
+    value: 1
+    min: 1
+    max: 4
+    step: 1
+
+  # For this checkbox, a checked value is "1" as a string, and an unchecked
+  # value is "0" as a string. It's used to determine whether or not to redirect
+  # the ipynb_checkpoints folder to /tmp, functionally disabling checkpoints.
+  disable_checkpoints:
+    widget: "check_box"
+    label: "Disable Checkpoints"
+    help: |
+      Redirects `.ipynb_checkpoints` to `/tmp`, so checkpoints are not persistent. Select this option if you do not want checkpoint folders to appear, or if the checkpoints are causing problems.
+
+  # Any extra command line arguments to feed to the `jupyter notebook ...`
+  # command that launches the Jupyter notebook within the batch job
+  extra_jupyter_args: ""
+
+# All of the attributes that make up the Dashboard form (in respective order),
+# and made available to the submit configuration file and the template ERB
+# files
+#
+# @note You typically do not need to modify this unless you want to add a new
+#   configurable value
+# @note If an attribute listed below is hard-coded above in the `attributes`
+#   option, then it will not appear in the form page that the user sees in the
+#   Dashboard
+form:
+  - environment
+  - spack
+  - extra_jupyter_args
+  - bc_num_hours
+  - custom_num_cores
+  - disable_checkpoints
